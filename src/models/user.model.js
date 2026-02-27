@@ -1,0 +1,34 @@
+const pool = require("../config/db");
+
+const findByEmail = async (email) => {
+  const [rows] = await pool.query(
+    "SELECT id, email, password FROM users WHERE email = ? LIMIT 1",
+    [email]
+  );
+  return rows[0]; // undefined si pas trouvé
+};
+
+
+
+const create = async (email, hashedPassword) => {
+  const [result] = await pool.query(
+    "INSERT INTO users (email, password) VALUES (?, ?)",
+    [email, hashedPassword]
+  );
+  return result.insertId;
+};
+
+const findAllPublic = async () => {
+  const [rows] = await pool.query("SELECT id, email FROM users ORDER BY id DESC");
+  return rows;
+};
+
+const findPublicById = async (id) => {
+  const [rows] = await pool.query(
+    "SELECT id, email FROM users WHERE id = ? LIMIT 1",
+    [id]
+  );
+  return rows[0];
+};
+
+module.exports = { findByEmail, create, findAllPublic, findPublicById };
